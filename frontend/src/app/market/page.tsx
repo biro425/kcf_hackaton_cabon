@@ -1,86 +1,101 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import styles from './Market.module.css';
+import { useRouter } from 'next/navigation';
 
+type Condition = 'New' | 'Like New' | 'Good' | 'Fair';
 type Product = {
-  id: string;
+  id: string | number;
   title: string;
   price: number;
-  condition: 'New' | 'Like New' | 'Good' | 'Fair';
+  condition: Condition;
   co2SavedKg: number;
-  image: string;
+  image?: string;
 };
 
-const PRODUCTS: Product[] = [
-  {
-    id: 'p1',
-    title: 'Vintage Denim Jacket',
-    price: 45,
-    condition: 'Good',
-    co2SavedKg: 8,
-    image: 'https://images.unsplash.com/photo-1551024601-bec78aea704b?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'p2',
-    title: 'Yoga Mat',
-    price: 18.99,
-    condition: 'Like New',
-    co2SavedKg: 4,
-    image: 'https://images.unsplash.com/photo-1552196563-55cd4e45efb3?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'p3',
-    title: 'Reusable Bottle',
-    price: 12.5,
-    condition: 'New',
-    co2SavedKg: 6,
-    image: 'https://images.unsplash.com/photo-1526401281623-3593f0cdd26d?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'p4',
-    title: 'Wireless Earbuds (Refurb.)',
-    price: 29,
-    condition: 'Good',
-    co2SavedKg: 7,
-    image: 'https://images.unsplash.com/photo-1585386959984-a4155223168f?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'p5',
-    title: 'Upcycled Tote Bag',
-    price: 14.2,
-    condition: 'Like New',
-    co2SavedKg: 3,
-    image: 'https://images.unsplash.com/photo-1593031414759-b06f7c4a7c54?q=80&w=800&auto=format&fit=crop',
-  },
-  {
-    id: 'p6',
-    title: 'Certified Pre-owned Phone',
-    price: 199,
-    condition: 'Fair',
-    co2SavedKg: 22,
-    image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop',
-  },
-];
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://localhost:4000';
 
 export default function MarketPage() {
   const [segment, setSegment] = useState<'buy' | 'sell'>('buy');
   const [query, setQuery] = useState('');
-  const [ecoPoints] = useState(149);
+  const [ecoPoints, setEcoPoints] = useState(0);
+
+  const [products, setProducts] = useState<Product[]>([]);
   const [cartCount, setCartCount] = useState(0);
 
+  const [ready, setReady] = useState(false);      // 토큰 확인 완료
+  const [loading, setLoading] = useState(true);   // 상품 로딩
+  const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
+
+  // 토큰 가드 + 유저/포인트 초기화 + 제품 목록 가져오기
+  useEffect(() => {
+    (async () => {
+      try {
+        if (typeof window === 'undefined') return;
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+          router.replace('/login');
+          return;
+        }
+
+        // 사용자 표시 정보(있으면 반영)
+        const raw = localStorage.getItem('user');
+        if (raw) {
+          try {
+            const u = JSON.parse(raw);
+            if (u?.ecoPoints != null) setEcoPoints(Number(u.ecoPoints));
+            else if (u?.carbon != null) setEcoPoints(Number(u.carbon));
+          } catch {}
+        }
+
+        setReady(true);
+
+        // 상품 불러오기
+        setLoading(true);
+        setError(null);
+
+        const res = await fetch(`${API_BASE}/products`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          // 401이면 토큰 리셋 후 로그인 이동
+          if (res.status === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            router.replace('/login');
+            return;
+          }
+          throw new Error(data?.error || 'Failed to load products');
+        }
+
+        const items: Product[] = Array.isArray(data) ? data : (data.items ?? []);
+        setProducts(items);
+      } catch (e: any) {
+        setError(e?.message ?? 'Network error');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [router]);
+
   const filtered = useMemo(() => {
-    const list = PRODUCTS.filter(p =>
-      p.title.toLowerCase().includes(query.trim().toLowerCase())
-    );
+    const q = query.trim().toLowerCase();
+    const list = products.filter(p => p.title.toLowerCase().includes(q));
     return list.sort((a, b) => b.co2SavedKg - a.co2SavedKg);
-  }, [query]);
+  }, [products, query]);
 
   const addToCart = (p: Product) => {
-    // TODO: 실제 장바구니 API 연결
     setCartCount(c => c + 1);
     alert(`Added "${p.title}" to cart`);
   };
+
+  if (!ready) return null;
 
   return (
     <main className={styles.market}>
@@ -137,6 +152,7 @@ export default function MarketPage() {
         </div>
       </header>
 
+      {/* 목록 영역 */}
       {segment === 'sell' ? (
         <section className={styles.sellEmpty}>
           <div className={styles.sellCard}>
@@ -147,20 +163,57 @@ export default function MarketPage() {
             </button>
           </div>
         </section>
+      ) : loading ? (
+        // 로딩 스켈레톤 (필요하면 더 꾸며도 OK)
+        <section className={styles.grid}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <article key={i} className={styles.card} aria-busy="true">
+              <div className={styles.thumb} style={{ background: '#f2f4f3', height: 160 }} />
+              <div className={styles.body}>
+                <div className={styles.cardTitle} style={{ background: '#eef2ef', height: 18, width: '60%', borderRadius: 6 }} />
+                <div className={styles.metaRow} style={{ marginTop: 10 }}>
+                  <div style={{ background: '#eef2ef', height: 16, width: 80, borderRadius: 6 }} />
+                </div>
+              </div>
+            </article>
+          ))}
+        </section>
+      ) : error ? (
+        <section className={styles.sellEmpty}>
+          <div className={styles.sellCard}>
+            <h2 className={styles.sellTitle}>Failed to load</h2>
+            <p className={styles.sellSub}>{error}</p>
+            <button
+              className={`${styles.btn} ${styles.btnOutline}`}
+              onClick={() => {
+                // 간단 재시도
+                setLoading(true);
+                setError(null);
+                // 트리거: 의존성 변경 위해 query 토글
+                setQuery(q => q + '');
+              }}
+            >
+              Retry
+            </button>
+          </div>
+        </section>
       ) : (
         <section className={styles.grid}>
           {filtered.map((p) => (
             <article key={p.id} className={styles.card}>
               <div className={styles.thumb}>
-                {/* 일반 img (Next/Image 설정 없이 사용) */}
-                <img src={p.image} alt={p.title} className={styles.img} />
+                <img
+                  src={p.image || 'https://via.placeholder.com/800x600?text=No+Image'}
+                  alt={p.title}
+                  className={styles.img}
+                />
                 <span className={styles.co2Badge}>-{p.co2SavedKg}kg CO₂</span>
               </div>
 
               <div className={styles.body}>
                 <h3 className={styles.cardTitle}>{p.title}</h3>
                 <div className={styles.metaRow}>
-                  <div className={styles.price}>${p.price.toFixed(2)}</div>
+                  <div className={styles.price}>${Number(p.price).toFixed(2)}</div>
                   <span
                     className={`${styles.chip} ${
                       p.condition === 'New'
@@ -186,7 +239,7 @@ export default function MarketPage() {
                   </button>
                   <button
                     className={`${styles.btn} ${styles.btnOutline}`}
-                    onClick={() => addToCart(p)}
+                    onClick={() => setCartCount(c => c + 1)}
                   >
                     Add to Cart
                   </button>

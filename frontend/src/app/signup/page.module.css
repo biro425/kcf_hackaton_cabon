@@ -1,0 +1,321 @@
+/* 로컬 변수(전역 변수 없을 경우에도 대비) */
+.screen {
+    --green: var(--green, #33a553);
+    --green-600: var(--green-600, #2e974c);
+    --green-700: var(--green-700, #278746);
+    --bg: var(--bg, #f6f7f6);
+    --card: var(--card-bg, #cf8989);
+    --text: var(--text-strong, #1e2a21);
+    --muted: var(--text-muted, #66756a);
+    --muted-2: #8d9a92;
+    --error: #d14343;
+    --shadow: 0 16px 40px rgba(0, 0, 0, .10);
+
+    min-height: 100svh;
+    background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(51, 165, 83, .18), transparent),
+        radial-gradient(700px 360px at 95% -20%, rgba(46, 151, 76, .12), transparent),
+        var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 헤더 */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 22px 18px 26px;
+    color: #fff;
+    background: linear-gradient(180deg,#33a553, #2e974c);
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, .12);
+}
+
+.brandRow {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.brand {
+    margin: 0;
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: .2px;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .1);
+}
+
+.badge {
+    background: rgba(255, 255, 255, .18);
+    border: 1px solid rgba(255, 255, 255, .28);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-weight: 800;
+    font-size: 12px;
+    backdrop-filter: blur(8px);
+}
+
+.subtitle {
+    margin: 10px 0 0;
+    color: #e8f7ec;
+    opacity: .95;
+}
+
+/* 카드 */
+.cardWrap {
+    padding: 22px 16px 32px;
+    display: grid;
+    place-items: center;
+}
+
+.card {
+    width: 100%;
+    max-width: 480px;
+    background: rgba(255, 255, 255, .85);
+    backdrop-filter: blur(10px);
+    border: 1px solid #e6efe8;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    padding: 20px;
+    position: relative;
+}
+
+.card::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(51, 165, 83, .06), rgba(255, 255, 255, 0));
+    z-index: -1;
+}
+
+.title {
+    margin: 2px 0 4px;
+    font-size: 24px;
+    font-weight: 900;
+    color: #203624;
+}
+
+.sub {
+    margin: 0 0 16px;
+    color: var(--muted);
+    font-weight: 700;
+}
+
+/* 에러 */
+.error {
+    margin-bottom: 12px;
+    border-radius: 12px;
+    background: rgba(209, 67, 67, .08);
+    border: 1px solid rgba(209, 67, 67, .3);
+    color: #8c2a2a;
+    font-weight: 800;
+    padding: 10px 12px;
+}
+
+/* 폼 */
+.form {
+    display: grid;
+    gap: 14px;
+}
+
+.label {
+    display: grid;
+    gap: 8px;
+}
+
+.labelText {
+    font-weight: 900;
+    font-size: 13px;
+    color: #2b3a2f;
+}
+
+.inputRow {
+    display: grid;
+    grid-template-columns: 26px 1fr 40px;
+    align-items: center;
+    background: #fff;
+    border: 2px solid #d8e8db;
+    border-radius: 14px;
+    padding: 10px 10px;
+    box-shadow: 0 4px 14px rgba(51, 165, 83, .06);
+    transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+
+.inputRow:focus-within {
+    border-color: var(--green-600);
+    box-shadow:
+        0 0 0 4px rgba(46, 151, 76, .12),
+        0 8px 18px rgba(46, 151, 76, .16);
+    background: #fbfffc;
+}
+
+.inputIcon {
+    width: 18px;
+    height: 18px;
+    color: var(--muted-2);
+}
+
+.input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 16px;
+    padding: 2px 8px;
+    color: #0f2016;
+}
+
+.input::placeholder {
+    color: #9db2a4;
+}
+
+.eyeBtn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.actionRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2px;
+}
+
+.remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #344335;
+    font-weight: 700;
+}
+
+.checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--green-600);
+}
+
+.link {
+    color: var(--green-700);
+    font-weight: 900;
+    text-decoration: none;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+/* 버튼 */
+.btn {
+    appearance: none;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-weight: 900;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform .06s ease, box-shadow .2s ease, background .2s ease, opacity .2s ease;
+}
+
+.btn:active {
+    transform: scale(.98);
+}
+
+.btnPrimary {
+    background: linear-gradient(180deg, var(--green-700), var(--green-600));
+    color: #000000;
+    box-shadow: 0 12px 26px rgba(39, 135, 70, .26), 0 4px 0 rgba(0, 0, 0, .04) inset;
+}
+
+.btnPrimary:hover {
+    filter: brightness(1.03);
+}
+
+.btnPrimary:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.btnGhost {
+    background: #fff;
+    color: var(--green-700);
+    border: 2px solid var(--green-700);
+}
+
+.btnIcon {
+    margin-right: 8px;
+}
+
+/* 로딩 스피너 */
+.spinner {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    border: 2px solid rgba(255, 255, 255, .6);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg)
+    }
+}
+
+/* 구분선 + 소셜 */
+.divider {
+    display: grid;
+    place-items: center;
+    margin: 18px 0;
+    position: relative;
+    color: var(--muted-2);
+    font-weight: 900;
+    font-size: 12px;
+}
+
+.divider::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e9eee9;
+}
+
+.divider>span {
+    background: rgba(255, 255, 255, .85);
+    padding: 0 10px;
+    position: relative;
+    border-radius: 99px;
+}
+
+.socialRow {
+    display: grid;
+    gap: 10px;
+}
+
+/* 하단 스위치 */
+.switchLine {
+    margin: 14px 0 0;
+    text-align: center;
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.linkStrong {
+    color: var(--green-700);
+    font-weight: 900;
+    text-decoration: none;
+}
+
+.linkStrong:hover {
+    text-decoration: underline;
+}

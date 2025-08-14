@@ -3,6 +3,7 @@ import type { Request, Response } from 'express';
 import jwt = require('jsonwebtoken');
 import * as bcrypt from 'bcryptjs';
 import { PrismaClient, Role } from '@prisma/client';
+import cors from 'cors';
 
 const app = express();
 const prisma = new PrismaClient();
@@ -10,6 +11,7 @@ const PORT = Number(process.env.PORT || 4000);
 const JWT_SECRET = process.env.JWT_SECRET || 'i_love_you_ryan'; 
 
 app.use(express.json());
+app.use(cors({ origin: true }));   
 
 app.get('/', (_req: Request, res: Response) => {
   res.send('Hello World!');
@@ -29,6 +31,7 @@ app.post('/signup', async (req: Request, res: Response) => {
         email,
         password: passwordHash,
         role: Role.USER,
+        savedCarbon: 0,
       },
     });
     const token = jwt.sign(
@@ -42,6 +45,7 @@ app.post('/signup', async (req: Request, res: Response) => {
       name: created.name,
       email: created.email,
       role: created.role,
+      carbon: created.savedCarbon || 0,
       token,
     });
   } catch (err: any) {
@@ -74,6 +78,7 @@ app.post('/signin', async (req: Request, res: Response) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      carbon: user.savedCarbon || 0,
       token,
     });
   } catch (err: any) {
@@ -103,6 +108,89 @@ app.get('/me', async (req: Request, res: Response) => {
     });
   } catch (err) {
     return res.status(401).json({ error: 'INVALID_TOKEN' });
+  }
+});
+import type { NextFunction } from 'express';
+function requireAuth(req: Request, res: Response, next: NextFunction) {
+  try {
+    const auth = req.headers.authorization || '';
+    const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+    if (!token) return res.status(401).json({ error: 'UNAUTHORIZED' });
+
+    const decoded = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
+    const userId = typeof decoded.sub === 'string' ? Number(decoded.sub) : (decoded.sub as number | undefined);
+    if (!userId) return res.status(401).json({ error: 'INVALID_TOKEN' });
+
+    // 토큰 철회 여부 확인
+    prisma.user.findUnique({ where: { id: userId } })
+      .then(user => {
+        if (!user || user.token !== token) return res.status(401).json({ error: 'TOKEN_REVOKED' });
+        // 필요하면 req에 심기
+        (req as any).userId = userId;
+        next();
+      })
+      .catch(() => res.status(500).json({ error: 'INTERNAL_ERROR' }));
+  } catch {
+    return res.status(401).json({ error: 'INVALID_TOKEN' });
+  }
+}
+app.get('/products', requireAuth, async (_req: Request, res: Response) => {
+  try {
+    const rows = await prisma.market.findMany({
+      orderBy: { createdAt: 'desc' },
+      select: { id: true, name: true, price: true, ci2savedkg: true, image: true },
+    });
+
+    const items = rows.map(r => ({
+      id: r.id,
+      title: r.name,               // name -> title
+      price: r.price,
+      condition: 'Good' as const,
+      co2SavedKg: r.ci2savedkg,
+      image: r.image || undefined,
+    }));
+
+    return res.json(items); 
+  } catch (e: any) {
+    console.error('GET /products error:', e);
+    return res.status(500).json({ error: 'INTERNAL_ERROR', message: e?.message || 'Server error' });
+  }
+});
+app.post('/productcr', requireAuth, async (req: Request, res: Response) => {
+  try {
+    const { name, price, ci2savedkg, image } = req.body ?? {};
+
+    if (!name || typeof name !== 'string' || name.trim().length < 2) {
+      return res.status(400).json({ error: 'INVALID_NAME', message: 'name must be at least 2 chars' });
+    }
+    const p = Number(price);
+    if (!Number.isFinite(p) || p <= 0) {
+      return res.status(400).json({ error: 'INVALID_PRICE', message: 'price must be a positive number' });
+    }
+    const c = ci2savedkg == null ? 0 : Number(ci2savedkg);
+    if (!Number.isFinite(c) || c < 0) {
+      return res.status(400).json({ error: 'INVALID_CO2', message: 'ci2savedkg must be >= 0' });
+    }
+    if (!image || typeof image !== 'string') {
+      return res.status(400).json({ error: 'INVALID_IMAGE', message: 'valid image url is required' });
+    }
+
+    const created = await prisma.market.create({
+      data: { name: name.trim(), price: p, ci2savedkg: c, image: image.trim() },
+      select: { id: true, name: true, price: true, ci2savedkg: true, image: true },
+    });
+
+    return res.status(201).json({
+      id: created.id,
+      title: created.name,
+      price: created.price,
+      condition: 'Good',
+      co2SavedKg: created.ci2savedkg ?? 0,
+      image: created.image,
+    });
+  } catch (e: any) {
+    console.error('POST /products error:', e);
+    return res.status(500).json({ error: 'INTERNAL_ERROR', message: e?.message || 'Server error' });
   }
 });
 

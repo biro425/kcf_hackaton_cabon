@@ -8,13 +8,23 @@ generator client {
 }
 
 model User {
-    id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now())
-    email     String   @unique
-    name      String
-    role      Role     @default(USER)
-    password  String
-    token     String   @default("signuping")
+    id          Int      @id @default(autoincrement())
+    createdAt   DateTime @default(now())
+    email       String   @unique
+    name        String
+    role        Role     @default(USER)
+    password    String
+    token       String   @default("signuping")
+    savedCarbon Float    @default(0)
+}
+
+model Market {
+    id         Int      @id @default(autoincrement())
+    createdAt  DateTime @default(now())
+    name       String
+    price      Float
+    ci2savedkg Float    @default(0)
+    image      String
 }
 
 enum Role {

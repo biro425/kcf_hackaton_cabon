@@ -1,6 +1,7 @@
 'use client';
 
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
 type Totals = {
@@ -11,13 +12,6 @@ type Totals = {
   monthly: number;
 };
 
-const totals: Totals = {
-  total: 74.5,
-  goal: 200,
-  daily: 74.5,
-  weekly: 74.5,
-  monthly: 74.5,
-};
 
 const actions: Array<{ key: string; label: string; icon: JSX.Element }> = [
   {
@@ -119,34 +113,69 @@ function StatCard({ title, value }: { title: string; value: number }) {
 }
 
 export default function HomePage() {
+  const totals: Totals = {
+  total: 74.5,
+  goal: 200,
+  daily: 1.5,
+  weekly: 10.5,
+  monthly: 74.5,
+};
   const { total, goal, daily, weekly, monthly } = totals;
   const pct = Math.round((total / goal) * 100);
   const [walletConnected, setWalletConnected] = useState(false);
 
+  const router = useRouter();
+  const [ready, setReady] = useState(false);
+
+  const [name, setName] = useState<string>("User");
+  const [ecoPoints, setEcoPoints] = useState<number>(0);
+
   const handleAction = (key: string) => alert(`${key} logged!`);
-  const connectWallet = () => {
-    // TODO: 실제 지갑 연결 로직
-    setWalletConnected(true);
-  };
+  const connectWallet = () => setWalletConnected(true);
   const mintNFT = () => {
     if (!walletConnected) return;
     alert("Minting NFT…");
   };
 
+  useEffect(() => {
+    try {
+      if (typeof window === "undefined") return;
+
+      const token = localStorage.getItem("token");
+      if (!token) {
+        router.replace("/login");
+        return;
+      }
+
+      const raw = localStorage.getItem("user");
+      if (raw) {
+        try {
+          const u = JSON.parse(raw);
+          if (u?.name) setName(String(u.name));
+          if (u?.ecoPoints != null) setEcoPoints(Number(u.ecoPoints));
+        } catch {
+          console.error("Failed to parse user data from localStorage");
+        }
+      }
+      setReady(true);
+    } catch {
+      router.replace("/login");
+    }
+  }, [router]);
+
+  if (!ready) return null;
+
   return (
     <main className={styles.wrap}>
-      {/* Top App Bar */}
       <header className={styles.topBar}>
         <div className={styles.status}>Home</div>
-        <div className={styles.points}>Total Points: 140</div>
+        <div className={styles.points}>Total Points: {ecoPoints}</div>
       </header>
 
-      {/* Welcome */}
       <section className={styles.welcome}>
-        <h1 className={styles.welcomeTitle}>Welcome, Tech!</h1>
+        <h1 className={styles.welcomeTitle}>환영합니다, {name}님</h1>
       </section>
 
-      {/* Carbon Impact Card */}
       <section className={styles.card}>
         <div className={styles.cardHeader}>Carbon Impact</div>
         <div className={styles.subtle}>Total CO₂ Saved</div>
@@ -165,7 +194,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Log Eco Action */}
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Log Eco Action</h2>
         <div className={styles.grid}>
@@ -178,7 +206,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Activity History */}
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Activity History</h2>
         <button className={`${styles.btn} ${styles.btnOutline} ${styles.fullWidth}`} onClick={() => alert("View All Activities")}>
@@ -186,7 +213,6 @@ export default function HomePage() {
         </button>
       </section>
 
-      {/* Upcoming Milestones */}
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Upcoming Milestones</h2>
         <ul className={styles.milestoneList}>
@@ -205,7 +231,6 @@ export default function HomePage() {
         </ul>
       </section>
 
-      {/* Blockchain Status */}
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Blockchain Status</h2>
         <div className={styles.walletCard}>
@@ -213,15 +238,10 @@ export default function HomePage() {
             {walletConnected ? "Wallet Connected" : "Wallet Not Connected"}
           </div>
           <div className={styles.walletSub}>
-            {walletConnected
-              ? "You're ready to claim rewards."
-              : "Connect your wallet to claim rewards"}
+            {walletConnected ? "You're ready to claim rewards." : "Connect your wallet to claim rewards"}
           </div>
           <div className={styles.walletRow}>
-            <button
-              className={`${styles.btn} ${styles.btnOutline}`}
-              onClick={connectWallet}
-            >
+            <button className={`${styles.btn} ${styles.btnOutline}`} onClick={connectWallet}>
               Connect Wallet
             </button>
             <button
