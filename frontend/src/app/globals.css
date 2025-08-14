@@ -1,42 +1,31 @@
+/* 전역 CSS: 리셋 + CSS 변수 */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --green: #33a553;
+  --green-600: #2e974c;
+  --green-700: #278746;
+  --green-100: #e9f6ec;
+  --text-strong: #1f2a1f;
+  --text-muted: #7b8a7b;
+  --card-bg: #ffffff;
+  --bg: #f6f7f6;
+  --shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  --radius-lg: 16px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
   margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+  padding: 0;
+  background: var(--bg);
+  height: 100%;
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  overscroll-behavior-y: contain;
+  background: var(--bg);
 }
