@@ -1,0 +1,127 @@
+.container {
+  min-height: 100vh;
+  background: #f7faf7;
+  padding-bottom: 70px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 18px 10px 18px;
+  background: linear-gradient(90deg, #2e974c 60%, #4fd17e 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 20px;
+  border-radius: 0 0 18px 18px;
+}
+.logo {
+  font-size: 22px;
+  font-weight: 800;
+}
+.ecoPoints {
+  background: rgba(255,255,255,0.18);
+  border-radius: 16px;
+  padding: 6px 16px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.profileSection {
+  margin: 24px 16px 0 16px;
+}
+.profileCard {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(46,151,76,0.08);
+  padding: 18px 18px 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.avatar {
+  width: 54px;
+  height: 54px;
+  background: #e6f4ea;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #2e974c;
+  font-weight: 700;
+}
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.profileName {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2e974c;
+}
+.profileEmail {
+  font-size: 14px;
+  color: #667066;
+}
+.settingsSection {
+  margin: 28px 16px 0 16px;
+}
+.sectionTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #2e974c;
+  margin-bottom: 8px;
+}
+.settingsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.settingsItem {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(46,151,76,0.06);
+  padding: 14px 16px 10px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 15px;
+  font-weight: 600;
+}
+.settingsItem input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #2e974c;
+}
+.settingsItem select {
+  border: none;
+  background: #f2f6f2;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 15px;
+  color: #2e974c;
+}
+.etcSection {
+  margin: 28px 16px 0 16px;
+}
+.etcList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.etcItem {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(46,151,76,0.06);
+  padding: 14px 16px 10px 16px;
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2e974c;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.etcItem:active {
+  background: #e6f4ea;
+}
