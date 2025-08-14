@@ -1,0 +1,331 @@
+/* 최상위 컨테이너 (전역 선택자/유니버설 없이 모듈 내부에서만 스타일링) */
+.market {
+    /* 로컬 변수: 필요한 색상만 지정 (globals.css의 변수와 함께 사용 가능) */
+    --green: #33a553;
+    --green-600: #2e974c;
+    --green-700: #278746;
+    --mint-100: #e9f6ec;
+    --mint-200: #d6f0dd;
+    --bg: #f6f7f6;
+    --card: #ffffff;
+    --text: #1f2a1f;
+    --muted: #7b8a7b;
+    --shadow: 0 8px 22px rgba(0, 0, 0, .06);
+
+    min-height: 100svh;
+    background: var(--bg);
+    color: var(--text);
+    padding-bottom: 88px;
+    /* 탭바 자리 여유 */
+    overflow-x: hidden;
+}
+
+/* ── 헤더 ───────────────────────────────────── */
+.topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: linear-gradient(180deg, var(--green), var(--green-600));
+    color: #fff;
+    padding: 14px 16px 12px;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .08);
+}
+
+.topbarRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: .2px;
+}
+
+.rightRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.points {
+    background: rgba(255, 255, 255, .18);
+    border: 1px solid rgba(255, 255, 255, .25);
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-weight: 800;
+    font-size: 12px;
+    backdrop-filter: blur(6px);
+}
+
+.cartBtn {
+    position: relative;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .18);
+    padding: 8px;
+    cursor: pointer;
+}
+
+.cartIcon {
+    width: 22px;
+    height: 22px;
+    color: #fff;
+    display: block;
+}
+
+.cartBadge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #fff;
+    color: var(--green-700);
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 11px;
+    padding: 2px 6px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .12);
+}
+
+.brandRow {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand {
+    font-size: 20px;
+    font-weight: 900;
+}
+
+/* 세그먼트 탭 */
+.segmented {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    background: rgba(255, 255, 255, .25);
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.segmentBtn {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: #f0fff3;
+    font-weight: 800;
+    font-size: 13px;
+    padding: 8px 14px;
+    cursor: pointer;
+}
+
+.segmentActive {
+    background: #fff;
+    color: var(--green-700);
+}
+
+/* 검색창 */
+.searchWrap {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border-radius: 14px;
+    padding: 10px 12px;
+    box-shadow: var(--shadow);
+}
+
+.searchIcon {
+    width: 20px;
+    height: 20px;
+    color: var(--muted);
+    display: block;
+}
+
+.searchInput {
+    border: none;
+    outline: none;
+    font-size: 15px;
+    background: transparent;
+}
+
+/* ── 콘텐츠 ─────────────────────────────────── */
+.grid {
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.card {
+    background: var(--card);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.thumb {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-bottom: 1px solid #eef2ef;
+}
+
+.img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.co2Badge {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    background: var(--green-700);
+    color: #fff;
+    font-weight: 900;
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .16);
+}
+
+.body {
+    padding: 12px;
+    display: grid;
+    gap: 10px;
+}
+
+.cardTitle {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 800;
+    line-height: 1.25;
+    min-height: 2.4em;
+    /* 두 줄 제목 안정 */
+}
+
+.metaRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.price {
+    font-size: 16px;
+    font-weight: 900;
+}
+
+.chip {
+    border-radius: 999px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 800;
+    border: 1px solid;
+}
+
+.chipNew {
+    color: #2e7d32;
+    border-color: #a5d6a7;
+    background: #e8f5e9;
+}
+
+.chipLikeNew {
+    color: #2b7a77;
+    border-color: #9fdad5;
+    background: #e6faf8;
+}
+
+.chipGood {
+    color: #3a6a2f;
+    border-color: #b7d7b1;
+    background: #edf7ec;
+}
+
+.chipFair {
+    color: #7a6b2b;
+    border-color: #e7dca3;
+    background: #fbf7e3;
+}
+
+.btnRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.btn {
+    appearance: none;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 10px;
+    font-weight: 900;
+    font-size: 13px;
+    cursor: pointer;
+    transition: transform .06s ease, box-shadow .2s ease, background .2s ease;
+}
+
+.btn:active {
+    transform: scale(.98);
+}
+
+.btnPrimary {
+    background: var(--green-700);
+    color: #fff;
+    box-shadow: 0 6px 14px rgba(39, 135, 70, .22);
+}
+
+.btnOutline {
+    background: #fff;
+    color: var(--green-700);
+    border: 2px solid var(--green-700);
+}
+
+/* ── Sell 빈 상태 ───────────────────────────── */
+.sellEmpty {
+    padding: 20px 16px;
+}
+
+.sellCard {
+    background: linear-gradient(180deg, #ffffff, #f4fbf6);
+    border: 1px solid #e7f1ea;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 18px;
+    text-align: center;
+}
+
+.sellTitle {
+    margin: 0 0 6px;
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.sellSub {
+    margin: 0 0 14px;
+    color: var(--muted);
+}
+
+/* 반응형 보정 */
+@media (min-width: 520px) {
+    .grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 840px) {
+    .grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
