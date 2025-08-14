@@ -1,184 +1,214 @@
-/* 최상위 컨테이너 (전역 선택자/유니버설 없이 모듈 내부에서만 스타일링) */
+/* ===== Page base ===== */
 .market {
-    /* 로컬 변수: 필요한 색상만 지정 (globals.css의 변수와 함께 사용 가능) */
-    --green: #33a553;
-    --green-600: #2e974c;
-    --green-700: #278746;
-    --mint-100: #e9f6ec;
-    --mint-200: #d6f0dd;
-    --bg: #f6f7f6;
-    --card: #ffffff;
-    --text: #1f2a1f;
-    --muted: #7b8a7b;
-    --shadow: 0 8px 22px rgba(0, 0, 0, .06);
-
-    min-height: 100svh;
-    background: var(--bg);
-    color: var(--text);
-    padding-bottom: 88px;
-    /* 탭바 자리 여유 */
+    min-height: 100dvh;
+    background: var(--bg, #f7faf8);
+    color: var(--text-strong, #111);
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
     overflow-x: hidden;
+    font-family: ui-sans-serif, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple SD Gothic Neo, "Noto Sans KR", sans-serif;
 }
 
-/* ── 헤더 ───────────────────────────────────── */
+/* ===== Top App Bar ===== */
 .topbar {
     position: sticky;
     top: 0;
     z-index: 20;
-    background: linear-gradient(180deg, var(--green), var(--green-600));
-    color: #fff;
-    padding: 14px 16px 12px;
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, .08);
+    background: #fff;
+    border-bottom: 1px solid #e6e6e6;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .04);
+    padding: 10px 14px 12px;
 }
 
 .topbarRow {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
     align-items: center;
-    justify-content: space-between;
+    gap: 12px;
 }
 
 .title {
     margin: 0;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 800;
     letter-spacing: .2px;
 }
 
 .rightRow {
-    display: flex;
+    display: grid;
+    grid-auto-flow: column;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
 }
 
 .points {
-    background: rgba(255, 255, 255, .18);
-    border: 1px solid rgba(255, 255, 255, .25);
-    border-radius: 999px;
-    padding: 6px 10px;
     font-weight: 800;
-    font-size: 12px;
-    backdrop-filter: blur(6px);
+    font-size: 13px;
+    color: var(--green-700, #166a43);
+    background: var(--green-100, #e8f5ee);
+    padding: 6px 10px;
+    border-radius: 999px;
 }
 
+/* Cart button with badge */
 .cartBtn {
     position: relative;
+    appearance: none;
     border: none;
+    background: #fff;
+    width: 40px;
+    height: 40px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, .18);
-    padding: 8px;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
     cursor: pointer;
 }
 
 .cartIcon {
     width: 22px;
     height: 22px;
-    color: #fff;
-    display: block;
+    color: var(--text-strong, #111);
 }
 
 .cartBadge {
     position: absolute;
-    top: -6px;
-    right: -6px;
-    background: #fff;
-    color: var(--green-700);
+    right: -4px;
+    top: -4px;
+    background: var(--green-600, #1b8f5a);
+    color: #fff;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
     border-radius: 999px;
-    font-weight: 800;
     font-size: 11px;
-    padding: 2px 6px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, .12);
+    font-weight: 800;
+    display: grid;
+    place-items: center;
 }
 
+/* ===== Brand row & segmented control ===== */
 .brandRow {
     margin-top: 8px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
     align-items: center;
-    justify-content: space-between;
+    gap: 12px;
 }
 
 .brand {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 900;
+    color: var(--green-700, #166a43);
+    letter-spacing: .3px;
 }
 
-/* 세그먼트 탭 */
 .segmented {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    background: rgba(255, 255, 255, .25);
-    border: 1px solid rgba(255, 255, 255, .35);
-    border-radius: 12px;
-    overflow: hidden;
+    display: inline-grid;
+    grid-auto-flow: column;
+    gap: 6px;
+    background: #f4f7f5;
+    border: 1px solid #e3ebe5;
+    padding: 4px;
+    border-radius: 999px;
 }
 
 .segmentBtn {
     appearance: none;
     border: none;
     background: transparent;
-    color: #f0fff3;
+    padding: 8px 14px;
+    border-radius: 999px;
     font-weight: 800;
     font-size: 13px;
-    padding: 8px 14px;
+    color: var(--text-muted, #667066);
     cursor: pointer;
 }
 
 .segmentActive {
     background: #fff;
-    color: var(--green-700);
+    color: var(--green-700, #166a43);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
 }
 
-/* 검색창 */
+/* ===== Search ===== */
 .searchWrap {
     margin-top: 12px;
-    display: grid;
-    grid-template-columns: 28px 1fr;
-    align-items: center;
-    gap: 8px;
-    background: #fff;
-    border-radius: 14px;
-    padding: 10px 12px;
-    box-shadow: var(--shadow);
+    position: relative;
 }
 
 .searchIcon {
-    width: 20px;
-    height: 20px;
-    color: var(--muted);
-    display: block;
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: #6c766c;
 }
 
 .searchInput {
-    border: none;
+    width: 100%;
+    border: 1.5px solid #e2e9e4;
+    border-radius: 12px;
+    padding: 12px 12px 12px 38px;
+    background: #fff;
+    font-size: 14px;
     outline: none;
-    font-size: 15px;
-    background: transparent;
 }
 
-/* ── 콘텐츠 ─────────────────────────────────── */
+.searchInput:focus {
+    border-color: var(--green-500, #22a06b);
+    box-shadow: 0 0 0 3px rgba(34, 160, 107, .12);
+}
+
+/* ===== Empty state (sell) ===== */
+.sellEmpty {
+    padding: 24px 16px 16px;
+}
+
+.sellCard {
+    background: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 16px;
+    padding: 18px;
+    text-align: center;
+    box-shadow: var(--shadow, 0 1px 2px rgba(0, 0, 0, .06));
+}
+
+.sellTitle {
+    margin: 0 0 6px;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.sellSub {
+    margin: 0 0 14px;
+    color: var(--text-muted, #667066);
+    font-size: 13px;
+}
+
+/* ===== Product grid & cards ===== */
 .grid {
-    padding: 16px;
+    padding: 14px 14px 24px;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .card {
-    background: var(--card);
+    background: #fff;
+    border: 1px solid #e8ece9;
     border-radius: 16px;
-    box-shadow: var(--shadow);
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    box-shadow: var(--shadow, 0 1px 2px rgba(0, 0, 0, .06));
+    display: grid;
 }
 
 .thumb {
     position: relative;
-    aspect-ratio: 4 / 3;
+    height: 160px;
+    background: #f2f4f3;
     overflow: hidden;
-    border-bottom: 1px solid #eef2ef;
 }
 
 .img {
@@ -192,13 +222,13 @@
     position: absolute;
     left: 10px;
     bottom: 10px;
-    background: var(--green-700);
+    background: rgba(27, 143, 90, .95);
     color: #fff;
-    font-weight: 900;
-    font-size: 12px;
     padding: 6px 10px;
     border-radius: 999px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, .16);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .2px;
 }
 
 .body {
@@ -212,120 +242,275 @@
     font-size: 15px;
     font-weight: 800;
     line-height: 1.25;
-    min-height: 2.4em;
-    /* 두 줄 제목 안정 */
 }
 
 .metaRow {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
     align-items: center;
-    justify-content: space-between;
+    gap: 8px;
 }
 
 .price {
-    font-size: 16px;
     font-weight: 900;
+    color: var(--text-strong, #111);
 }
 
+/* Condition chip */
 .chip {
-    border-radius: 999px;
-    padding: 4px 8px;
-    font-size: 11px;
+    padding: 6px 10px;
+    font-size: 12px;
     font-weight: 800;
-    border: 1px solid;
+    border-radius: 999px;
+    border: 1px solid transparent;
 }
 
 .chipNew {
-    color: #2e7d32;
-    border-color: #a5d6a7;
-    background: #e8f5e9;
+    background: #e7f3ff;
+    color: #0b66c3;
+    border-color: #cfe6ff;
 }
 
 .chipLikeNew {
-    color: #2b7a77;
-    border-color: #9fdad5;
-    background: #e6faf8;
+    background: #eef6ff;
+    color: #2f5fbf;
+    border-color: #d9e9ff;
 }
 
 .chipGood {
-    color: #3a6a2f;
-    border-color: #b7d7b1;
-    background: #edf7ec;
+    background: var(--green-100, #e8f5ee);
+    color: var(--green-700, #166a43);
+    border-color: #d6eee2;
 }
 
 .chipFair {
-    color: #7a6b2b;
-    border-color: #e7dca3;
-    background: #fbf7e3;
+    background: #fff7e6;
+    color: #b26a00;
+    border-color: #ffe1a6;
 }
 
 .btnRow {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: 10px;
 }
 
+/* ===== Buttons ===== */
 .btn {
     appearance: none;
     border: none;
     border-radius: 12px;
-    padding: 12px 10px;
-    font-weight: 900;
-    font-size: 13px;
+    padding: 12px 14px;
+    font-weight: 800;
+    font-size: 14px;
     cursor: pointer;
-    transition: transform .06s ease, box-shadow .2s ease, background .2s ease;
-}
-
-.btn:active {
-    transform: scale(.98);
 }
 
 .btnPrimary {
-    background: var(--green-700);
+    background: var(--green-600, #1b8f5a);
     color: #fff;
-    box-shadow: 0 6px 14px rgba(39, 135, 70, .22);
 }
 
 .btnOutline {
     background: #fff;
-    color: var(--green-700);
-    border: 2px solid var(--green-700);
+    color: var(--green-600, #1b8f5a);
+    border: 2px solid var(--green-600, #1b8f5a);
 }
 
-/* ── Sell 빈 상태 ───────────────────────────── */
-.sellEmpty {
-    padding: 20px 16px;
+.btnDisabled {
+    background: #bcd9c4 !important;
+    border-color: #bcd9c4 !important;
+    color: #fff !important;
+    cursor: not-allowed !important;
 }
 
-.sellCard {
-    background: linear-gradient(180deg, #ffffff, #f4fbf6);
-    border: 1px solid #e7f1ea;
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    padding: 18px;
-    text-align: center;
+/* ===== Cart Modal ===== */
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .35);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    display: grid;
+    place-items: end center;
+    z-index: 1000;
+    padding: 16px;
 }
 
-.sellTitle {
-    margin: 0 0 6px;
+.modal {
+    width: 100%;
+    max-width: 560px;
+    max-height: min(80vh, 720px);
+    overflow: auto;
+    background: #fff;
+    border-radius: 20px 20px 14px 14px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+    padding: 12px 12px 16px;
+}
+
+.modalHeader {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 6px 8px;
+    position: sticky;
+    top: 0;
+    background: #fff;
+    z-index: 1;
+}
+
+.modalTitle {
+    margin: 0;
     font-size: 18px;
+    font-weight: 800;
+}
+
+.modalClose {
+    appearance: none;
+    border: none;
+    background: #f1f5f3;
+    color: #111;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.cartList {
+    list-style: none;
+    margin: 0;
+    padding: 8px 4px 4px;
+    display: grid;
+    gap: 12px;
+}
+
+.cartEmpty {
+    padding: 20px;
+    text-align: center;
+    color: #667066;
+    border: 1px dashed #cfd9d2;
+    border-radius: 12px;
+    background: #fafdfb;
+}
+
+.cartItem {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border: 1px solid #e6e6e6;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: var(--shadow, 0 1px 2px rgba(0, 0, 0, .06));
+}
+
+.cartThumb {
+    width: 64px;
+    height: 64px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f2f4f3;
+}
+
+.cartThumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.cartBody {
+    min-width: 0;
+}
+
+.cartTitle {
+    font-weight: 800;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 4px;
+}
+
+.cartMeta {
+    font-size: 12px;
+    color: #667066;
+    margin-bottom: 8px;
+}
+
+.qtyCtrl {
+    display: inline-grid;
+    grid-auto-flow: column;
+    align-items: center;
+    gap: 8px;
+    background: #f5f7f6;
+    border-radius: 999px;
+    padding: 4px 8px;
+}
+
+.qtyBtn {
+    appearance: none;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.qtyNum {
+    min-width: 20px;
+    text-align: center;
+    font-weight: 800;
+}
+
+.removeBtn {
+    appearance: none;
+    border: none;
+    background: transparent;
+    color: #a33;
+    margin-left: 10px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.lineTotal {
     font-weight: 900;
+    white-space: nowrap;
+    margin-left: 8px;
 }
 
-.sellSub {
-    margin: 0 0 14px;
-    color: var(--muted);
+.cartFooter {
+    position: sticky;
+    bottom: 0;
+    background: #fff;
+    padding-top: 8px;
 }
 
-/* 반응형 보정 */
-@media (min-width: 520px) {
+.subtotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    padding: 8px 4px 12px;
+    border-top: 1px dashed #dbe5de;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.subtotal strong {
+    font-size: 18px;
+}
+
+/* ===== Small screens tweaks ===== */
+@media (min-width: 768px) {
     .grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-}
-
-@media (min-width: 840px) {
-    .grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }

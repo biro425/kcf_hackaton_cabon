@@ -4,6 +4,16 @@ import { JSX, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 
+type Activity = {
+  id: string;
+  title: string;
+  type: 'recycle' | 'market' | 'challenge' | 'carbon' | 'other';
+  points: number;
+  at: number;
+  icon?: JSX.Element;
+  note?: string;
+};
+
 type Totals = {
   total: number;
   goal: number;
@@ -58,7 +68,7 @@ const actions: Array<{ key: string; label: string; icon: JSX.Element }> = [
   },
   {
     key: "second-hand",
-    label: "Second-hand Purchase",
+    label: "Recycle",
     icon: (
       <svg viewBox="0 0 24 24" className={styles.icon} aria-hidden="true">
         <path d="M4 7h16l-2 10H6L4 7z" fill="none" stroke="currentColor" strokeWidth="2"/>
@@ -126,16 +136,31 @@ export default function HomePage() {
 
   const router = useRouter();
   const [ready, setReady] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [activities, setActivities] = useState<Activity[]>([]);
 
   const [name, setName] = useState<string>("User");
   const [ecoPoints, setEcoPoints] = useState<number>(0);
 
-  const handleAction = (key: string) => alert(`${key} logged!`);
+  const handleAction = (key: string) => {
+    router.push(`/recycle`);
+  }
   const connectWallet = () => setWalletConnected(true);
   const mintNFT = () => {
     if (!walletConnected) return;
     alert("Minting NFT…");
   };
+
+  const openModal = () => setShowModal(true);
+  const closeModal = () => setShowModal(false);
+
+  function fmtDate(ts: number) {
+    try {
+      return new Date(ts).toLocaleString();
+    } catch {
+      return '';
+    }
+  }
 
   useEffect(() => {
     try {
@@ -157,11 +182,47 @@ export default function HomePage() {
           console.error("Failed to parse user data from localStorage");
         }
       }
+
+      // Load activity history from localStorage (fallback demo data)
+      const rawActs = localStorage.getItem('activities');
+      if (rawActs) {
+        try {
+          const arr = JSON.parse(rawActs) as Activity[];
+          if (Array.isArray(arr)) {
+            setActivities(arr.sort((a,b) => b.at - a.at));
+          }
+        } catch {}
+      } else {
+        // demo list (will be shown until real data is saved)
+        const demo: Activity[] = [
+          { id: 'a3', title: 'Recycled PET bottle', type: 'recycle', points: 6, at: Date.now() - 1000 * 60 * 15 },
+          { id: 'a2', title: 'Logged walking (2km)', type: 'carbon', points: 3, at: Date.now() - 1000 * 60 * 60 * 5 },
+          { id: 'a1', title: 'Bought second‑hand jacket', type: 'market', points: 12, at: Date.now() - 1000 * 60 * 60 * 24 },
+        ];
+        setActivities(demo);
+      }
+
       setReady(true);
     } catch {
       router.replace("/login");
     }
   }, [router]);
+
+  useEffect(() => {
+    if (!showModal) {
+      document.body.style.overflow = '';
+      return;
+    }
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeModal();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [showModal]);
 
   if (!ready) return null;
 
@@ -208,7 +269,7 @@ export default function HomePage() {
 
       <section className={styles.section}>
         <h2 className={styles.sectionTitle}>Activity History</h2>
-        <button className={`${styles.btn} ${styles.btnOutline} ${styles.fullWidth}`} onClick={() => alert("View All Activities")}>
+        <button className={`${styles.btn} ${styles.btnOutline} ${styles.fullWidth}`} onClick={openModal}>
           View All Activities
         </button>
       </section>
@@ -254,6 +315,49 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {showModal && (
+        <div className={styles.modalOverlay} onClick={closeModal} aria-hidden={!showModal}>
+          <div
+            className={styles.modal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="activityModalTitle"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.modalHeader}>
+              <h3 id="activityModalTitle" className={styles.modalTitle}>Activity History</h3>
+              <button className={styles.modalClose} onClick={closeModal} aria-label="Close">×</button>
+            </div>
+
+            <ul className={styles.activityList}>
+              {activities.map(a => (
+                <li key={a.id} className={styles.activityItem}>
+                  <div className={styles.activityIcon} aria-hidden="true">
+                    {/* simple icons by type */}
+                    {a.type === 'recycle' ? (
+                      <svg viewBox="0 0 24 24"><path d="M4 7h3l1.5-2h7L17 7h3a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2z" fill="none" stroke="currentColor" strokeWidth="2"/><circle cx="12" cy="13" r="4" fill="none" stroke="currentColor" strokeWidth="2"/></svg>
+                    ) : a.type === 'market' ? (
+                      <svg viewBox="0 0 24 24"><path d="M6 6h15l-2 9H8L6 6z" fill="none" stroke="currentColor" strokeWidth="2"/><circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/></svg>
+                    ) : a.type === 'challenge' ? (
+                      <svg viewBox="0 0 24 24"><path d="M8 21l4-3 4 3V5a4 4 0 10-8 0v16z" fill="none" stroke="currentColor" strokeWidth="2"/></svg>
+                    ) : a.type === 'carbon' ? (
+                      <svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" stroke="currentColor" strokeWidth="2"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="2"/></svg>
+                    ) : (
+                      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="2"/></svg>
+                    )}
+                  </div>
+                  <div className={styles.activityBody}>
+                    <div className={styles.activityTitle}>{a.title}</div>
+                    <div className={styles.activityMeta}>{fmtDate(a.at)}</div>
+                  </div>
+                  <div className={styles.activityPoints}>+{a.points}</div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

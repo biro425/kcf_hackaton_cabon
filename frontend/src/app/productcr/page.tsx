@@ -64,7 +64,6 @@ export default function NewProductPage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        // ⚠️ 스키마 키에 맞춰 ci2savedkg 로 보냄
         body: JSON.stringify({
           name: name.trim(),
           price,

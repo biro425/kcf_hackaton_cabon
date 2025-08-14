@@ -13,6 +13,13 @@ type Product = {
   co2SavedKg: number;
   image?: string;
 };
+type CartItem = {
+  id: string | number;
+  title: string;
+  price: number;
+  image?: string;
+  qty: number;
+};
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://localhost:4000';
 
@@ -23,12 +30,54 @@ export default function MarketPage() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [cartCount, setCartCount] = useState(0);
-
-  const [ready, setReady] = useState(false);      // 토큰 확인 완료
-  const [loading, setLoading] = useState(true);   // 상품 로딩
-  const [error, setError] = useState<string | null>(null);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [showCart, setShowCart] = useState(false);
 
   const router = useRouter();
+
+  const itemCount = useMemo(() => cart.reduce((s, it) => s + it.qty, 0), [cart]);
+  const cartSubtotal = useMemo(() => cart.reduce((s, it) => s + it.price * it.qty, 0), [cart]);
+
+  // Sync badge count with cart
+  useEffect(() => {
+    setCartCount(itemCount);
+  }, [itemCount]);
+
+  function openCart() {
+    setShowCart(true);
+  }
+  function closeCart() {
+    setShowCart(false);
+  }
+  function incQty(id: string | number) {
+    setCart(list => list.map(it => it.id === id ? { ...it, qty: it.qty + 1 } : it));
+  }
+  function decQty(id: string | number) {
+    setCart(list => list.flatMap(it => {
+      if (it.id !== id) return [it];
+      const next = it.qty - 1;
+      return next <= 0 ? [] : [{ ...it, qty: next }];
+    }));
+  }
+  function removeItem(id: string | number) {
+    setCart(list => list.filter(it => it.id !== id));
+  }
+
+  useEffect(() => {
+    if (!showCart) {
+      document.body.style.overflow = '';
+      return;
+    }
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeCart();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [showCart]);
 
   // 토큰 가드 + 유저/포인트 초기화 + 제품 목록 가져오기
   useEffect(() => {
@@ -84,6 +133,10 @@ export default function MarketPage() {
     })();
   }, [router]);
 
+  const [ready, setReady] = useState(false);      // 토큰 확인 완료
+  const [loading, setLoading] = useState(true);   // 상품 로딩
+  const [error, setError] = useState<string | null>(null);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     const list = products.filter(p => p.title.toLowerCase().includes(q));
@@ -91,8 +144,14 @@ export default function MarketPage() {
   }, [products, query]);
 
   const addToCart = (p: Product) => {
-    setCartCount(c => c + 1);
-    alert(`Added "${p.title}" to cart`);
+    setCart(list => {
+      const found = list.find(it => it.id === p.id);
+      if (found) {
+        return list.map(it => it.id === p.id ? { ...it, qty: it.qty + 1 } : it);
+      }
+      return [...list, { id: p.id, title: p.title, price: Number(p.price), image: p.image, qty: 1 }];
+    });
+    setShowCart(true);
   };
 
   if (!ready) return null;
@@ -105,7 +164,7 @@ export default function MarketPage() {
           <h1 className={styles.title}>Market</h1>
           <div className={styles.rightRow}>
             <span className={styles.points}>{ecoPoints} EcoPoints</span>
-            <button className={styles.cartBtn} aria-label="Cart">
+            <button className={styles.cartBtn} aria-label="Cart" onClick={openCart}>
               <svg viewBox="0 0 24 24" className={styles.cartIcon} aria-hidden="true">
                 <path d="M6 6h15l-2 9H8L6 6z" fill="none" stroke="currentColor" strokeWidth="2"/>
                 <circle cx="9" cy="20" r="1.6" fill="currentColor"/>
@@ -239,7 +298,7 @@ export default function MarketPage() {
                   </button>
                   <button
                     className={`${styles.btn} ${styles.btnOutline}`}
-                    onClick={() => setCartCount(c => c + 1)}
+                    onClick={() => addToCart(p)}
                   >
                     Add to Cart
                   </button>
@@ -248,6 +307,64 @@ export default function MarketPage() {
             </article>
           ))}
         </section>
+      )}
+
+      {showCart && (
+        <div className={styles.modalOverlay} onClick={closeCart}>
+          <div
+            className={styles.modal}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cartTitle"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className={styles.modalHeader}>
+              <h3 id="cartTitle" className={styles.modalTitle}>My Cart</h3>
+              <button className={styles.modalClose} onClick={closeCart} aria-label="Close">×</button>
+            </div>
+
+            <ul className={styles.cartList}>
+              {cart.length === 0 && (
+                <li className={styles.cartEmpty}>Your cart is empty.</li>
+              )}
+              {cart.map(item => (
+                <li key={item.id} className={styles.cartItem}>
+                  <div className={styles.cartThumb}>
+                    <img
+                      src={item.image || 'https://via.placeholder.com/80x80?text=No+Image'}
+                      alt=""
+                    />
+                  </div>
+                  <div className={styles.cartBody}>
+                    <div className={styles.cartTitle}>{item.title}</div>
+                    <div className={styles.cartMeta}>${item.price.toFixed(2)}</div>
+                    <div className={styles.qtyCtrl}>
+                      <button type="button" className={styles.qtyBtn} onClick={() => decQty(item.id)} aria-label="Decrease">−</button>
+                      <span className={styles.qtyNum}>{item.qty}</span>
+                      <button type="button" className={styles.qtyBtn} onClick={() => incQty(item.id)} aria-label="Increase">+</button>
+                      <button type="button" className={styles.removeBtn} onClick={() => removeItem(item.id)} aria-label="Remove">Remove</button>
+                    </div>
+                  </div>
+                  <div className={styles.lineTotal}>${(item.price * item.qty).toFixed(2)}</div>
+                </li>
+              ))}
+            </ul>
+
+            <div className={styles.cartFooter}>
+              <div className={styles.subtotal}>
+                <span>Subtotal</span>
+                <strong>${cartSubtotal.toFixed(2)}</strong>
+              </div>
+              <button
+                className={`${styles.btn} ${styles.btnPrimary} ${cart.length === 0 ? styles.btnDisabled : ''}`}
+                disabled={cart.length === 0}
+                onClick={() => alert('Proceed to payment')}
+              >
+                Checkout
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   );
