@@ -1,0 +1,246 @@
+.container {
+    min-height: 100vh;
+    background: #f7faf7;
+    padding-bottom: 70px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 18px 10px 18px;
+    background: linear-gradient(90deg, #2e974c 60%, #4fd17e 100%);
+    color: #fff;
+    font-weight: 700;
+    font-size: 20px;
+    border-radius: 0 0 18px 18px;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.ecoPoints {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 16px;
+    padding: 6px 16px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.impactSection {
+    margin: 24px 16px 0 16px;
+}
+
+.impactCard {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 8px rgba(46, 151, 76, 0.08);
+    padding: 20px 18px 18px 18px;
+}
+
+.impactRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.impactValue {
+    font-size: 38px;
+    font-weight: 800;
+    color: #2e974c;
+}
+
+.periodSelect {
+    border: none;
+    background: #f2f6f2;
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #2e974c;
+}
+
+.progressBarWrap {
+    margin: 18px 0 6px 0;
+}
+
+.progressBar {
+    width: 100%;
+    height: 10px;
+    background: #e6f4ea;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, #2e974c 60%, #4fd17e 100%);
+    border-radius: 8px;
+}
+
+.progressText {
+    font-size: 13px;
+    color: #2e974c;
+    font-weight: 600;
+    margin-top: 2px;
+    display: block;
+}
+
+.goalRow {
+    font-size: 15px;
+    color: #667066;
+    margin-bottom: 8px;
+}
+
+.statsRow {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+}
+
+.statsValue {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2e974c;
+    text-align: center;
+}
+
+.statsLabel {
+    font-size: 13px;
+    color: #667066;
+    text-align: center;
+}
+
+.actionSection {
+    margin: 32px 16px 0 16px;
+}
+
+.actionGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 12px;
+}
+
+.actionBtn {
+    background: #f2f6f2;
+    border: none;
+    border-radius: 14px;
+    padding: 18px 0 10px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #2e974c;
+    box-shadow: 0 1px 4px rgba(46, 151, 76, 0.06);
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.actionBtn:active {
+    background: #e6f4ea;
+}
+
+.actionIcon {
+    font-size: 28px;
+    margin-bottom: 6px;
+}
+
+.actionLabel {
+    font-size: 14px;
+}
+
+.historySection {
+    margin: 32px 16px 0 16px;
+}
+
+.historyTabs {
+    display: flex;
+    background: #e6f4ea;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.tabActive {
+    flex: 1;
+    background: #b6f2c7;
+    color: #2e974c;
+    border: none;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 8px 0;
+}
+
+.tabInactive {
+    flex: 1;
+    background: transparent;
+    color: #2e974c;
+    border: none;
+    font-weight: 700;
+    font-size: 15px;
+    padding: 8px 0;
+}
+
+.activityList {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 8px 0;
+}
+
+.activityItem {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(46, 151, 76, 0.06);
+    padding: 14px 16px 10px 16px;
+    margin-bottom: 10px;
+}
+
+.activityMain {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.activityTitle {
+    color: #2e974c;
+}
+
+.activityDate {
+    color: #667066;
+    font-size: 13px;
+}
+
+.activitySub {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2px;
+    font-size: 13px;
+}
+
+.activityCo2 {
+    color: #2e974c;
+}
+
+.activityPoints {
+    color: #4fd17e;
+    font-weight: 700;
+}
+
+.viewAllBtn {
+    width: 100%;
+    background: #e6f4ea;
+    color: #2e974c;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 0;
+    font-size: 15px;
+    font-weight: 700;
+    margin-top: 4px;
+    cursor: pointer;
+}
